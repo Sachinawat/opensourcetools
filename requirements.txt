@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+langgraph
+langchain-core
+langchain-openai
+fastmcp
+python-dotenv
+pyyaml
+requests
+feedparser
+yfinance
+pydantic
+beautifulsoup4

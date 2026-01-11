@@ -1,0 +1,11 @@
+env: dev
+logging:
+  level: INFO
+  file: logs/app.log
+models:
+  openai_chat: gpt-4o-mini
+  openai_fallback: gpt-4o-mini
+defaults:
+  news_feed: "https://news.google.com/rss?hl=en-IN&gl=IN&ceid=IN:en"
+  max_news: 10
+  default_stock_suffix: ".NS"
