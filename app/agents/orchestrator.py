@@ -2,7 +2,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import Callable, Dict, List, Optional, Union
 
-from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, ToolMessage
+from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, ToolMessage, SystemMessage
 from langchain_core.tools import Tool
 from langchain_openai import ChatOpenAI
 from langgraph.graph import END, StateGraph
@@ -78,6 +78,18 @@ def _run_tool_call(
     tool_label: str,
 ) -> AgentState:
     messages = list(state.messages)
+
+    def _intent_scoped_instruction() -> str:
+        if tool_label == "weather":
+            return "Extract only the city (and country if present) for weather. Ignore news/stock parts. If no city found, default to Mumbai, India."
+        if tool_label == "stock":
+            return "Extract only the stock ticker symbol (e.g., TCS, INFY, HCLTECH). Ignore weather/news text. Do not include words like 'price' or 'stock' in the symbol."
+        if tool_label == "news":
+            return "Extract only the news topic or country. Ignore weather/stock text. Default topic: India."
+        return "Use only the information relevant to this tool; ignore other intents."
+
+    messages.append(SystemMessage(content=_intent_scoped_instruction()))
+
     bound = llm.bind_tools(tools)
 
     ai_msg: AIMessage = bound.invoke(messages)
